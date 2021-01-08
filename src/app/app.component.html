@@ -1,21 +1,160 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="bigBox">
+  <div class="titleBox">
+    <h1 class="mainTitle">Auditoría</h1>
+    <h3 class="subTitle">Posicionamiento Orgánico</h3>
+  </div>
+  <form class="formBox" [formGroup]="dominio" (ngSubmit)="analyzeUrl()">
+    <div style="flex-wrap: wrap; justify-content: flex-start;" class="urlBox">
 
-<router-outlet></router-outlet>
+      <div style="padding-right: 50px;" class="selectionInput">
+        <p class="optionText">
+
+          País:
+        </p>
+        <select class="locationSelect" formControlName="location" id="">
+          <option *ngFor="let location of locations" value={{location.location_name}}>{{location.location_name}}
+          </option>
+        </select>
+      </div>
+      <div class="selectionInput">
+        <p class="optionText">
+
+          Idioma:
+        </p>
+        <select class="locationSelect" formControlName="language" id="">
+          <option value="English">Inglés</option>
+          <option value="Spanish">Español</option>
+        </select>
+      </div>
+
+    </div>
+    <div style="flex-wrap: nowrap; justify-content: flex-start" class="urlBox">
+
+      <div style="width: 75%;" class="formInput">
+        <select style="border-right: none!important;" formControlName="http" id="">
+          <option value="https://">https://</option>
+          <option [selected]="true" value="http://">http://</option>
+        </select>
+        <input type="text" class="lInput" name="" formControlName="url" placeholder="URL">
+      </div>
+
+      <button style="margin-left: 20px;" type="submit" class="formButton">
+        <p>Auditar dominio</p>
+      </button>
+    </div>
+
+  </form>
+  <div class="pdfBox" *ngIf="isKeywordsIdeasReady" (click)="generateReport()">
+    <img class="pdfImg" src="assets/pdf.png" alt="">
+    <p class="pdfText">Generar reporte</p>
+  </div>
+  <div class="resultsBox" id="resultsBoxId">
+    <div id="pagespeedDesktopResultBox" class="resultBox" *ngIf="isPagespeedReady">
+      <p class="titleText" (click)="toggle($event, 0)">Rendimiento del sitio en Escritorio</p>
+      <div id="desktop" [ngClass]="toggled[0]" class="infoBox">
+        <div id="desktopScore" class="scoreBox">
+          <app-progress-ring [percentage]="puntuacionDesktop" id="0"></app-progress-ring>
+        </div>
+        <div class="textBox">
+          <p class="dataBox">Primer renderizado con contenido: <b>{{firstContentfulPaintDesktop}}</b></p>
+          <p class="dataBox">Renderizado del contenido mas largo: <b>{{largestContentfulPaintDesktop}}</b></p>
+          <p class="dataBox">Tiempo hasta que el sitio esté interactivo: <b>{{interactiveDesktop}}</b></p>
+          <p class="dataBox">Índice de velocidad: <b>{{speedIndexDesktop}}</b></p>
+        </div>
+        <div class="opportunitiesBox">
+          <p class="subTitleText">Oportunidades de mejora</p>
+          <div class="opportunityBox" *ngFor="let op of mejorasDesktop">
+            <p>{{op.title}}: </p>
+            <p><span *ngIf="op.displayValue" style="font-weight: normal"> {{op.displayValue}}</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="pagespeedMobileResultBox" class="resultBox" *ngIf="isPagespeedReady">
+      <p class="titleText" (click)="toggle($event, 1)">Rendimiento del sitio en Móvil</p>
+      <div id="mobile" [ngClass]="toggled[1]" class="infoBox">
+        <div id="mobileScore" class="scoreBox">
+          <app-progress-ring [percentage]="puntuacionMobile" id="1"></app-progress-ring>
+        </div>
+        <div class="textBox">
+          <p class="dataBox">Primer renderizado con contenido: <b>{{firstContentfulPaintMobile}}</b></p>
+          <p class="dataBox">Renderizado del contenido mas largo: <b>{{largestContentfulPaintMobile}}</b></p>
+          <p class="dataBox">Tiempo hasta que el sitio esté interactivo: <b>{{firstContentfulPaintMobile}}</b></p>
+          <p class="dataBox">Índice de velocidad: <b>{{speedIndexMobile}}</b></p>
+        </div>
+        <div class="opportunitiesBox">
+          <p class="subTitleText">Oportunidades de mejora</p>
+          <div class="opportunityBox" *ngFor="let op of mejorasDesktop">
+            <p>{{op.title}}:</p>
+            <p> <span *ngIf="op.displayValue" style="font-weight: normal"> {{op.displayValue}}</span></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div id="trafficResultBox" class="resultBox" *ngIf="isTrafficReady">
+      <p class="titleText" (click)="toggle($event, 2)">Tráfico mensual</p>
+      <div *ngIf="isTrafficData" id="trafico" [ngClass]="toggled[2]" class="infoBox">
+
+        <div class="textBox">
+          <p class="dataBox">Tráfico de los últimos 30 días: <b>{{trafico}}</b></p>
+          <p class="dataBox">Tiempo promedio en el sitio: <b>{{tiempoEnSitio}}</b></p>
+        </div>
+      </div>
+      <div *ngIf="!isTrafficData" [ngClass]="toggled[2]" class="infoBox">
+
+        <div class="textBox">
+          <p class="dataBox">{{noTraffic}}</p>
+        </div>
+      </div>
+    </div>
+    <div id="mainKeywordsResultBox" class="resultBox" *ngIf="isMainKeywordsReady">
+      <p class="titleText" (click)="toggle($event, 3)">Palabras clave de posicionamiento</p>
+      <div *ngIf="isMainKeywordsData" id="mainKeywords" [ngClass]="toggled[3]" class="infoBox">
+
+        <div *ngFor="let data of mainKeywords" class="keywordBox">
+          <p class="keywordText">
+            Keyword: <b>{{data.keyword}}</b>
+          </p>
+          <p class="keywordText">
+            Ranking: <b>{{data.ranking}}</b>
+          </p>
+        </div>
+
+      </div>
+      <div *ngIf="!isMainKeywordsData" [ngClass]="toggled[4]" class="infoBox">
+
+        <div class="textBox">
+          <p class="dataBox">{{noMainKeywords}}</p>
+        </div>
+      </div>
+    </div>
+    <div id="keywordsIdeasResultBox" class="resultBox" *ngIf="isKeywordsIdeasReady">
+      <p class="titleText" (click)="toggle($event, 4)">Ideas de palabras clave</p>
+      <div *ngIf="isKeywordsIdeasData" id="keywordsIdeas" [ngClass]="toggled[4]" class="infoBox">
+
+        <p class="keywordText">
+
+          Algunas ideas de palabras que pueden usar para mejorar su posicionamiento en las redes:
+        </p>
+        <div *ngFor="let data of keywordsIdeas" class="keywordBox">
+          <p class="keywordText">
+            <b>{{data}}</b>
+          </p>
+        </div>
+      </div>
+      <div *ngIf="!isKeywordsIdeasData" [ngClass]="toggled[4]" class="infoBox">
+
+        <div class="textBox">
+          <p class="dataBox">{{noKeywordsIdeas}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="display: hidden" id="reportBox">
+
+</div>
+
+<app-loader [message]="loadMessage" *ngIf="isLoading"></app-loader>

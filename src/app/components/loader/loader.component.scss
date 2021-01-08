@@ -1,0 +1,27 @@
+.loadBox {
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+}
+
+.loadIcon {
+  width: 120px;
+}
+
+.loadText {
+  font-size: 16px;
+  font-weight: bold;
+  color: #29352f;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+}
